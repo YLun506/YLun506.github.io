@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>炫酷流动背景计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        /* 流动渐变炫酷背景核心 */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 渐变色 */
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #358bba, #51ebf3, #67cfb0);
+            background-size: 400% 400%;
+            /* 流动动画 */
+            animation: flowBg 12s ease infinite;
+        }
+        @keyframes flowBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* 计算器容器 */
+        .calc {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 180, 255, 0.4);
+        }
+        /* 输入显示屏 */
+        #screen {
+            width: 100%;
+            padding: 18px 12px;
+            margin-bottom: 20px;
+            font-size: 32px;
+            text-align: right;
+            border: none;
+            border-radius: 10px;
+            background: #fff;
+            outline: none;
+        }
+        /* 按钮布局 */
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(4, 70px);
+            gap: 12px;
+        }
+        button {
+            height: 70px;
+            font-size: 22px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            transform: scale(1.08);
+        }
+        /* 数字按钮 */
+        .num {
+            background: #ffffff;
+        }
+        /* 运算符按钮 */
+        .op {
+            background: #0088ff;
+            color: white;
+        }
+        /* 清除/等于按钮 */
+        .clear {
+            background: #ff4466;
+            color: white;
+        }
+        .equal {
+            background: #00cc66;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="calc">
+        <input type="text" id="screen" readonly>
+        <div class="btn-group">
+            <button class="clear" onclick="clearAll()">C</button>
+            <button class="clear" onclick="back()">←</button>
+            <button class="op" onclick="inputChar('/')">/</button>
+            <button class="op" onclick="inputChar('*')">×</button>
+
+            <button class="num" onclick="inputChar('7')">7</button>
+            <button class="num" onclick="inputChar('8')">8</button>
+            <button class="num" onclick="inputChar('9')">9</button>
+            <button class="op" onclick="inputChar('-')">-</button>
+
+            <button class="num" onclick="inputChar('4')">4</button>
+            <button class="num" onclick="inputChar('5')">5</button>
+            <button class="num" onclick="inputChar('6')">6</button>
+            <button class="op" onclick="inputChar('+')">+</button>
+
+            <button class="num" onclick="inputChar('1')">1</button>
+            <button class="num" onclick="inputChar('2')">2</button>
+            <button class="num" onclick="inputChar('3')">3</button>
+            <button class="op" onclick="negative()">±</button>
+
+            <button class="num" onclick="inputChar('0')">0</button>
+            <button class="num" onclick="inputChar('.')">.</button>
+            <button class="equal" onclick="calcResult()" colspan="2">=</button>
+        </div>
+    </div>
+
+    <script>
+        const screen = document.getElementById('screen');
+
+        // 输入数字、符号、小数点
+        function inputChar(val) {
+            screen.value += val;
+        }
+
+        // 全部清空
+        function clearAll() {
+            screen.value = '';
+        }
+
+        // 退格删除最后一位
+        function back() {
+            screen.value = screen.value.slice(0, -1);
+        }
+
+        // 切换正负号（实现负数）
+        function negative() {
+            if (screen.value.startsWith('-')) {
+                screen.value = screen.value.slice(1);
+            } else {
+                screen.value = '-' + screen.value;
+            }
+        }
+
+        // 计算结果，支持小数四则运算
+        function calcResult() {
+            try {
+                // 把 × 替换成 JS 识别的 *
+                let exp = screen.value.replaceAll('×', '*');
+                let res = eval(exp);
+                // 防止超长小数，保留6位
+                screen.value = Number(res.toFixed(6));
+            } catch (err) {
+                screen.value = '输入错误';
+            }
+        }
+    </script>
+</body>
+</html>
