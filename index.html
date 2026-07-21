@@ -2,157 +2,301 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>炫酷流动背景计算器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打字练习器</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
-        /* 流动渐变炫酷背景核心 */
+
+        /* 丝滑流动渐变背景，柔和过渡无断层 */
         body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 渐变色 */
-            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #00c6fb, #005bea);
-            background-size: 400% 400%;
-            /* 流动动画 */
-            animation: flowBg 12s ease infinite;
+            gap: 40px;
+            background: linear-gradient(-30deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe);
+            background-size: 300% 300%;
+            animation: smoothGradient 16s ease-in-out infinite;
         }
-        @keyframes flowBg {
+
+        @keyframes smoothGradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        /* 计算器容器 */
-        .calc {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(12px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 180, 255, 0.4);
+
+        /* 左侧计时器面板 样式透明度与键盘统一 */
+        .timer-panel {
+            background: rgba(22, 22, 22, 0.8);
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 240px;
         }
-        /* 输入显示屏 */
-        #screen {
+        .timer-title {
+            color: #fff;
+            font-size: 22px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .time-input {
             width: 100%;
-            padding: 18px 12px;
-            margin-bottom: 20px;
-            font-size: 32px;
-            text-align: right;
+            height: 46px;
+            background: rgba(55,55,55,0.8);
             border: none;
-            border-radius: 10px;
-            background: #fff;
+            border-radius: 9px;
+            color: #fff;
+            font-size: 18px;
+            padding: 0 14px;
             outline: none;
         }
-        /* 按钮布局 */
-        .btn-group {
-            display: grid;
-            grid-template-columns: repeat(4, 70px);
-            gap: 12px;
+        .time-input::placeholder {
+            color: #cccccc;
         }
-        button {
-            height: 70px;
-            font-size: 22px;
+        /* 正方形开始按钮 */
+        .start-btn {
+            width: 100%;
+            height: 46px;
+            background: rgba(55, 55, 55, 0.8);
             border: none;
-            border-radius: 10px;
+            border-radius: 9px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.12s ease;
         }
-        button:hover {
-            transform: scale(1.08);
+        .start-btn:hover {
+            background: rgba(90,90,90,0.8);
         }
-        /* 数字按钮 */
-        .num {
-            background: #ffffff;
+        .time-display {
+            color: #fff;
+            font-size: 36px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 3px;
         }
-        /* 运算符按钮 */
-        .op {
-            background: #0088ff;
-            color: white;
+
+        /* 键盘容器组：计分板 + 键盘 */
+        .keyboard-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
         }
-        /* 清除/等于按钮 */
-        .clear {
-            background: #ff4466;
-            color: white;
+        /* 顶部计分板 样式透明度与键盘完全一致 */
+        .score-panel {
+            background: rgba(22, 22, 22, 0.8);
+            padding: 16px 40px;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
         }
-        .equal {
-            background: #00cc66;
-            color: white;
+        .score-text {
+            color: #fff;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        /* 键盘外壳 透明度80%（原有代码无修改） */
+        .keyboard-box {
+            background: rgba(22, 22, 22, 0.8);
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        }
+
+        .key-row {
+            display: flex;
+            gap: 9px;
+            margin-bottom: 9px;
+        }
+
+        /* 复刻真实机械键盘缩进（原有代码无修改） */
+        .row-second {
+            padding-left: 24px;
+        }
+        .row-third {
+            padding-left: 48px;
+        }
+
+        /* 普通按键 透明度80%（原有代码无修改） */
+        .key {
+            width: 52px;
+            height: 52px;
+            background: rgba(55, 55, 55, 0.8);
+            color: #fff;
+            font-size: 21px;
+            font-weight: 600;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: all 0.12s ease;
+            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);
+        }
+
+        .key:hover {
+            background: rgba(80, 80, 80, 0.8);
+            transform: translateY(-2px);
+        }
+
+        /* 红色目标按键：完全不透明高亮（原有代码无修改） */
+        .key.highlight-red {
+            background: #e62828 !important;
+            opacity: 1 !important;
+            box-shadow: 0 0 18px rgba(255, 30, 30, 0.7), inset 0 -3px 0 #a81c1c;
         }
     </style>
 </head>
 <body>
-    <div class="calc">
-        <input type="text" id="screen" readonly>
-        <div class="btn-group">
-            <button class="clear" onclick="clearAll()">C</button>
-            <button class="clear" onclick="back()">←</button>
-            <button class="op" onclick="inputChar('/')">/</button>
-            <button class="op" onclick="inputChar('*')">×</button>
+    <!-- 左侧计时器面板（新增） -->
+    <div class="timer-panel">
+        <div class="timer-title">练习倒计时</div>
+        <input class="time-input" id="timeInput" placeholder="输入练习秒数" type="number" min="1">
+        <button class="start-btn" id="startBtn">开始练习</button>
+        <div class="time-display" id="timeText">00:00</div>
+    </div>
 
-            <button class="num" onclick="inputChar('7')">7</button>
-            <button class="num" onclick="inputChar('8')">8</button>
-            <button class="num" onclick="inputChar('9')">9</button>
-            <button class="op" onclick="inputChar('-')">-</button>
+    <!-- 键盘区域：计分板 + 键盘本体 -->
+    <div class="keyboard-group">
+        <!-- 键盘上方计分板（新增） -->
+        <div class="score-panel">
+            <div class="score-text">当前分数：<span id="scoreNum">0</span></div>
+        </div>
 
-            <button class="num" onclick="inputChar('4')">4</button>
-            <button class="num" onclick="inputChar('5')">5</button>
-            <button class="num" onclick="inputChar('6')">6</button>
-            <button class="op" onclick="inputChar('+')">+</button>
-
-            <button class="num" onclick="inputChar('1')">1</button>
-            <button class="num" onclick="inputChar('2')">2</button>
-            <button class="num" onclick="inputChar('3')">3</button>
-            <button class="op" onclick="negative()">±</button>
-
-            <button class="num" onclick="inputChar('0')">0</button>
-            <button class="num" onclick="inputChar('.')">.</button>
-            <button class="equal" onclick="calcResult()" colspan="2">=</button>
+        <!-- 原有键盘HTML 完全未改动 -->
+        <div class="keyboard-box">
+            <!-- 第一行 QWERTYUIOP -->
+            <div class="key-row row-first">
+                <div class="key" data-char="q">Q</div>
+                <div class="key" data-char="w">W</div>
+                <div class="key" data-char="e">E</div>
+                <div class="key" data-char="r">R</div>
+                <div class="key" data-char="t">T</div>
+                <div class="key" data-char="y">Y</div>
+                <div class="key" data-char="u">U</div>
+                <div class="key" data-char="i">I</div>
+                <div class="key" data-char="o">O</div>
+                <div class="key" data-char="p">P</div>
+            </div>
+            <!-- 第二行 ASDFGHJKL 左缩进 -->
+            <div class="key-row row-second">
+                <div class="key" data-char="a">A</div>
+                <div class="key" data-char="s">S</div>
+                <div class="key" data-char="d">D</div>
+                <div class="key" data-char="f">F</div>
+                <div class="key" data-char="g">G</div>
+                <div class="key" data-char="h">H</div>
+                <div class="key" data-char="j">J</div>
+                <div class="key" data-char="k">K</div>
+                <div class="key" data-char="l">L</div>
+            </div>
+            <!-- 第三行 ZXCVBNM 大缩进 -->
+            <div class="key-row row-third">
+                <div class="key" data-char="z">Z</div>
+                <div class="key" data-char="x">X</div>
+                <div class="key" data-char="c">C</div>
+                <div class="key" data-char="v">V</div>
+                <div class="key" data-char="b">B</div>
+                <div class="key" data-char="n">N</div>
+                <div class="key" data-char="m">M</div>
+            </div>
         </div>
     </div>
 
     <script>
-        const screen = document.getElementById('screen');
+        // ========== 原有键盘逻辑 完全未修改 ==========
+        const allLetterKeys = document.querySelectorAll('.key');
+        let activeTargetKey = null;
 
-        // 输入数字、符号、小数点
-        function inputChar(val) {
-            screen.value += val;
+        // 随机切换红色按键
+        function setRandomRedKey() {
+            if (activeTargetKey) {
+                activeTargetKey.classList.remove('highlight-red');
+            }
+            const randomIdx = Math.floor(Math.random() * allLetterKeys.length);
+            activeTargetKey = allLetterKeys[randomIdx];
+            activeTargetKey.classList.add('highlight-red');
         }
 
-        // 全部清空
-        function clearAll() {
-            screen.value = '';
+        // 页面加载初始化红键
+        window.addEventListener('load', setRandomRedKey);
+
+        // ========== 新增全局变量：倒计时、计分 ==========
+        const scoreNum = document.getElementById('scoreNum');
+        const timeInput = document.getElementById('timeInput');
+        const startBtn = document.getElementById('startBtn');
+        const timeText = document.getElementById('timeText');
+        let totalScore = 0;
+        let countDownTimer = null;
+        let isTimeRunning = false;
+        let remainSecond = 0;
+
+        // 格式化时间 MM:SS
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
         }
 
-        // 退格删除最后一位
-        function back() {
-            screen.value = screen.value.slice(0, -1);
+        // 倒计时结束，禁用所有键盘操作
+        function timeOver() {
+            clearInterval(countDownTimer);
+            isTimeRunning = false;
+            timeText.textContent = "时间到";
         }
 
-        // 切换正负号（实现负数）
-        function negative() {
-            if (screen.value.startsWith('-')) {
-                screen.value = screen.value.slice(1);
+        // 开始倒计时按钮逻辑
+        startBtn.addEventListener('click', () => {
+            if(isTimeRunning) return;
+            const inputVal = parseInt(timeInput.value);
+            if(isNaN(inputVal) || inputVal <= 0) {
+                alert("请输入有效的练习秒数！");
+                return;
+            }
+            // 重置分数、倒计时
+            totalScore = 0;
+            scoreNum.textContent = totalScore;
+            remainSecond = inputVal;
+            isTimeRunning = true;
+            timeText.textContent = formatTime(remainSecond);
+
+            countDownTimer = setInterval(() => {
+                remainSecond--;
+                timeText.textContent = formatTime(remainSecond);
+                if(remainSecond <= 0) {
+                    timeOver();
+                }
+            }, 1000);
+        });
+
+        // ========== 键盘监听（新增计分、倒计时判断逻辑，原有匹配逻辑保留） ==========
+        document.addEventListener('keydown', (event) => {
+            // 时间结束，所有按键操作无任何反应
+            if(!isTimeRunning) return;
+
+            const inputChar = event.key.toLowerCase();
+            const targetChar = activeTargetKey.dataset.char;
+            // 按对红色目标字母：+10分，刷新随机红键
+            if (inputChar === targetChar) {
+                totalScore += 10;
+                scoreNum.textContent = totalScore;
+                setRandomRedKey();
             } else {
-                screen.value = '-' + screen.value;
+                // 按错其他字母：-2分，最低0分不扣负数
+                totalScore -= 2;
+                if(totalScore < 0) totalScore = 0;
+                scoreNum.textContent = totalScore;
             }
-        }
-
-        // 计算结果，支持小数四则运算
-        function calcResult() {
-            try {
-                // 把 × 替换成 JS 识别的 *
-                let exp = screen.value.replaceAll('×', '*');
-                let res = eval(exp);
-                // 防止超长小数，保留6位
-                screen.value = Number(res.toFixed(6));
-            } catch (err) {
-                screen.value = '输入错误';
-            }
-        }
+        });
     </script>
 </body>
 </html>
